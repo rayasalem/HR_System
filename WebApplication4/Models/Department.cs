@@ -6,8 +6,8 @@ namespace WebApplication2.Models
     public class Department
     {
         [Key]
-        [Display(Name ="Code")]
-        [Column(TypeName ="int")]
+        [Display(Name = "Code")]
+        [Column(TypeName = "int")]
         public int ID { get; set; }
 
         [Display(Name = "Department Name")]
@@ -16,7 +16,7 @@ namespace WebApplication2.Models
 
         [Display(Name = "Number Of Employees")]
         [Column(TypeName = "int")]
-        public static int NumberOfEmployees{ get; set; }
+        public static int NumberOfEmployees { get; set; }
 
         [Display(Name = "Head of Department")]
         [Column(TypeName = "nvarchar(MAX)")]
@@ -30,6 +30,6 @@ namespace WebApplication2.Models
         [Column(TypeName = "int")]
         public int? Budget { get; set; }
 
-       
+
     }
 }

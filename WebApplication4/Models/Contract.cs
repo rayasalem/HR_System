@@ -27,5 +27,9 @@ namespace WebApplication2.Models
         [Display(Name = "End Date")]
         [Column(TypeName = "date")]
         public DateOnly? EndDate { get; set; }
+
+        [ForeignKey("EmpRef")]
+        public int EmpRef { get; set; }
+        public Employee? emps { get; set; }
     }
 }
