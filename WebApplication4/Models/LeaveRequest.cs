@@ -1,43 +1,46 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
-
-public class LeaveRequest
+namespace WebApplication2.Models
 {
-    [Key]
-    public int RequestId { get; set; }
+    public class LeaveRequest
+    {
+        [Key]
+        [Display(Name = "Code")]
+        [Column(TypeName = "int")]
+        public int ID { get; set; }
 
-    [Required]
-    [MaxLength(10)]
-    public string NoRequest { get; set; }
+        [Display(Name = "NoRequest")]
+        [Column(TypeName = "nvarchar(MAX)")]
+        public string? NoRequest { get; set; }
 
-    [Required]
-    [MaxLength(20)]
-    public string EmpId { get; set; }
 
-    [Required]
-    [MaxLength(100)]
-    public string EmpName { get; set; }
+        [Display(Name = "Type Request")]
+        [Column(TypeName = "nvarchar(MAX)")]
+        public string? Type { get; set; }
 
-    [Required]
-    [MaxLength(50)]
-    public string Type { get; set; }
 
-    [Required]
-    public DateTime StartDate { get; set; }
+        [Display(Name = "StartDate")]
+        [Column(TypeName = "date")]
+        public DateOnly StartDate { get; set; }
 
-    [Required]
-    public DateTime ExpiryDate { get; set; }
 
-    [MaxLength(500)]
-    public string Message { get; set; }
+        [Display(Name = "ExpiryDate")]
+        [Column(TypeName = "date")]
+        public DateOnly ExpiryDate { get; set; }
 
-    [Required]
-    [MaxLength(20)]
-    public string State { get; set; }
 
-    [ForeignKey("EmpRef")]
-    public int EmpRef { get; set; }
-    public Employee? emps { get; set; }
+        [Display(Name = "Message Request")]
+        [Column(TypeName = "nvarchar(MAX)")]
+        public string? Message { get; set; }
+
+
+        [Display(Name = "State Request")]
+        [Column(TypeName = "nvarchar(MAX)")]
+        public string? State { get; set; }
+
+        [ForeignKey("EmpRef")]
+        public int EmpRef { get; set; }
+        public Employee? emps { get; set; }
+    }
 }
