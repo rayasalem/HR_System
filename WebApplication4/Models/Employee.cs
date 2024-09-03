@@ -2,8 +2,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using WebApplication2.Models;
-using WebApplication4.Models;
-
 
 public class Employee
 {
