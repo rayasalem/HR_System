@@ -1,32 +1,42 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+
+namespace WebApplication2.Models;
+public class Invoice
+{
+    [Key]
+    [Display(Name = "Code")]
+    [Column(TypeName = "int")]
+    public int ID { get; set; }
+
+    [Display(Name = "Invoice Name")]
+    [Column(TypeName = "nvarchar(MAX)")]
+    public string? InvoiceName { get; set; }
 
 
-    public class Invoice
-    {
-        [Key]
-        public int InvoiceId { get; set; }
+    [Display(Name = "Amount")]
+    [Column(TypeName = "decimal (18, 0)")]
+    public decimal? Amount { get; set; }
 
-        [Required]
-        [MaxLength(100)]
-        public string Name { get; set; }
+    [Display(Name = "Invoice Date")]
+    [Column(TypeName = "date")]
+    public DateOnly? InvoiceDate { get; set; }
 
-        [Required]
-        public decimal Amount { get; set; }
 
-        [Required]
-        public DateTime? InvoiceDate { get; set; }
+    [Display(Name = "Invoice Due")]
+    [Column(TypeName = "date")]
+    public DateOnly? InvoiceDue { get; set; }
 
-        [Required]
-        public DateTime ?InvoiceDue { get; set; }
-
-        [MaxLength(500)]
-        public string ?Description { get; set; }
+    [Display(Name = "Invoice Description")]
+    [Column(TypeName = "nvarchar(MAX)")]
+    public string? InvoiceDescription { get; set; }
 
     [Required]
-    [MaxLength(20)]
+    [Display(Name = "Status")]
+    [Column(TypeName = "nvarchar(MAX)")]
     public string? Status { get; set; }
+
+
     [ForeignKey("EmpRef")]
     public int EmpRef { get; set; }
     public Employee? emps { get; set; }
