@@ -1,8 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using WebApplication2.Models;
-using WebApplication4.Models;
 
-namespace WebApplication4.DSConn
+namespace WebApplication2.DSConn
 {
     public class DBContext : DbContext
     {
@@ -17,10 +16,10 @@ namespace WebApplication4.DSConn
             modelBuilder.Entity<Department>().ToTable("Department", "EmpDet");
             modelBuilder.Entity<Contract>().ToTable("Contract", "EmpDet");
             modelBuilder.Entity<Project>().ToTable("Project", "EmpDet");
-            modelBuilder.Entity<Payroll>().ToTable("Payroll", "EmpDet");
             modelBuilder.Entity<Invoice>().ToTable("Invoice", "EmpDet");
             modelBuilder.Entity<LeaveRequest>().ToTable("LeaveRequest", "EmpDet");
             //modelBuilder.Entity<Attendance>().ToTable("Attendance", "EmpDet");
+            //modelBuilder.Entity<Payroll>().ToTable("Payroll", "EmpDet");
 
 
 
@@ -31,10 +30,11 @@ namespace WebApplication4.DSConn
         public DbSet<Position> Positions { get; set; }
         public DbSet<Contract> Contracts { get; set; }
         public DbSet<Project> Projects { get; set; }
-        public DbSet<Payroll> Payrolls { get; set; }
         public DbSet<Invoice> Invoices { get; set; }
         public DbSet<LeaveRequest> LeaveRequests { get; set; }
-      //  public DbSet<Attendance> Attendances { get; set; }
+
+        //  public DbSet<Payroll> Payrolls { get; set; }
+        //  public DbSet<Attendance> Attendances { get; set; }
 
 
     }
