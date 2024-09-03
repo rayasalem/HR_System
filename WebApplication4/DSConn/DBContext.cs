@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using WebApplication2.Models;
+using WebApplication4.Models;
 
-namespace WebApplication2.DSConn
+namespace WebApplication4.DSConn
 {
     public class DBContext : DbContext
     {
