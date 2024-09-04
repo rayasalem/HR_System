@@ -112,11 +112,10 @@ namespace WebApplication4.Controllers
             project.Status = projectUpdate.Status;
             project.Attachment = projectUpdate.Attachment;
 
-            // Update employees if provided
+            
             if (projectUpdate.Employees != null)
             {
-                // You might want to handle how employees are updated. 
-                // For simplicity, we are just replacing the list here.
+                
                 project.Employees = projectUpdate.Employees;
             }
 
