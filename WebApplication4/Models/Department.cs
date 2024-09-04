@@ -16,7 +16,7 @@ namespace WebApplication4.Models
 
         [Display(Name = "Number Of Employees")]
         [Column(TypeName = "int")]
-        public static int NumberOfEmployees { get; set; }
+        public int NumberOfEmployees { get; set; }
 
         [Display(Name = "Head of Department")]
         [Column(TypeName = "nvarchar(MAX)")]
