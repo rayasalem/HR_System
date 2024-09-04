@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
+using Newtonsoft.Json;
 using WebApplication4.DSConn;
 using WebApplication4.Models;
-using Newtonsoft.Json;
 
 namespace WebApplication4.Controllers
 {
@@ -31,33 +30,31 @@ namespace WebApplication4.Controllers
         }
 
         [HttpGet]
-        [HttpGet]
         [Route("GetProjects")]
         public IActionResult GetProjects()
         {
-           
-            var projectList = _Con.Projects
-                .Include(p => p.Employees)
-                .Select(p => new
-                {
-                    p.ID,
-                    p.Title,
-                    p.Description,
-                    p.StartDate,
-                    p.TimeRequired,
-                    p.Status,
-                    p.Attachment,
-                    Employees = p.Employees.Select(e => new
-                    {
-                        e.Id,
-                        e.Name,
-                        e.Email,
-                        e.Phone,
-                        e.Specialty
-                    }).ToList()
-                }).ToList();
+            var projectList = from p in _Con.Projects
+                              join e in _Con.Employees on p.ID equals e.ProRef into employees
+                              select new
+                              {
+                                  p.ID,
+                                  p.Title,
+                                  p.Description,
+                                  p.StartDate,
+                                  p.TimeRequired,
+                                  p.Status,
+                                  p.Attachment,
+                                  Employees = employees.Select(emp => new
+                                  {
+                                      emp.Id,
+                                      emp.Name,
+                                      emp.Email,
+                                      emp.Phone,
+                                      emp.Specialty
+                                  }).ToList()
+                              };
 
-            var jsonResult = JsonConvert.SerializeObject(projectList, new JsonSerializerSettings { MaxDepth = 10 });
+            var jsonResult = JsonConvert.SerializeObject(projectList.ToList(), new JsonSerializerSettings { MaxDepth = 10 });
             return Ok(jsonResult);
         }
 
@@ -65,28 +62,27 @@ namespace WebApplication4.Controllers
         [Route("GetProject/{id}")]
         public IActionResult GetProject(int id)
         {
-            var project = _Con.Projects
-                .Include(p => p.Employees)
-                .Where(p => p.ID == id)
-                .Select(p => new
-                {
-                    p.ID,
-                    p.Title,
-                    p.Description,
-                    p.StartDate,
-                    p.TimeRequired,
-                    p.Status,
-                    p.Attachment,
-                    Employees = p.Employees.Select(e => new
-                    {
-                        e.Id,
-                        e.Name,
-                        e.Email,
-                        e.Phone,
-                        e.Specialty
-                    }).ToList()
-                })
-                .SingleOrDefault();
+            var project = (from p in _Con.Projects
+                           join e in _Con.Employees on p.ID equals e.ProRef into employees
+                           where p.ID == id
+                           select new
+                           {
+                               p.ID,
+                               p.Title,
+                               p.Description,
+                               p.StartDate,
+                               p.TimeRequired,
+                               p.Status,
+                               p.Attachment,
+                               Employees = employees.Select(emp => new
+                               {
+                                   emp.Id,
+                                   emp.Name,
+                                   emp.Email,
+                                   emp.Phone,
+                                   emp.Specialty
+                               }).ToList()
+                           }).SingleOrDefault();
 
             if (project == null)
                 return NotFound("Project not found");
@@ -116,9 +112,11 @@ namespace WebApplication4.Controllers
             project.Status = projectUpdate.Status;
             project.Attachment = projectUpdate.Attachment;
 
-            
+            // Update employees if provided
             if (projectUpdate.Employees != null)
             {
+                // You might want to handle how employees are updated. 
+                // For simplicity, we are just replacing the list here.
                 project.Employees = projectUpdate.Employees;
             }
 
