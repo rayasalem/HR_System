@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Nancy.Json;
 using WebApplication4.DSConn;
@@ -17,14 +17,14 @@ namespace WebApplication4.Controllers
         }
 
         [HttpGet]
-        [Route("AddCont/{EmpRef}/{CoType}/{posRef}/{salary}/{stDate}/{eDate}")]
+        [Route("AddCont/{EmpRef}/{CoType}/{pos}/{salary}/{stDate}/{eDate}")]
         public string AddContract(string EmpRef, string CoType, 
-            string posRef, string salary, string stDate, string eDate)
+            string pos, string salary, string stDate, string eDate)
         {
             Contract ObjCont= new Contract();
             ObjCont.EmpRef = int.Parse(EmpRef);
             ObjCont.ContractType = CoType;
-            ObjCont.PosRef = int.Parse(posRef);
+            ObjCont.position = pos;
             ObjCont.salary = decimal.Parse(salary);
             ObjCont.StartDate = DateTime.Parse(stDate);
             ObjCont.EndDate = DateTime.Parse(eDate);
@@ -41,8 +41,7 @@ namespace WebApplication4.Controllers
         {
             var getData = from co in _Con.Contracts
                           join em in _Con.Employees on co.EmpRef equals em.Id
-                          join po in _Con.Positions on co.PosRef equals po.ID
-                          select new {em.Name, co.ContractType, po.PositionTitle, 
+                          select new {em.Name, co.ContractType, co.position, 
                                       co.StartDate, co.EndDate, co.salary};
 
             JavaScriptSerializer jsData = new JavaScriptSerializer();
@@ -64,16 +63,16 @@ namespace WebApplication4.Controllers
         }
 
         [HttpGet]
-        [Route("EditCont/{ContNo}/{EmpRef}/{CoType}/{posRef}/{salary}/{stDate}/{eDate}")]
+        [Route("EditCont/{ContNo}/{EmpRef}/{CoType}/{pos}/{salary}/{stDate}/{eDate}")]
         public string EditCont(string ContNo,string EmpRef, string CoType,
-            string posRef, string salary, string stDate, string eDate)
+            string pos, string salary, string stDate, string eDate)
         {
             int Num = int.Parse(ContNo);
             Contract ObjCont = new Contract();
             ObjCont = _Con.Contracts.Single(c => c.ID == Num);
             ObjCont.EmpRef = int.Parse(EmpRef);
             ObjCont.ContractType = CoType;
-            ObjCont.PosRef = int.Parse(posRef);
+            ObjCont.position = pos;
             ObjCont.salary = decimal.Parse(salary);
             ObjCont.StartDate = DateTime.Parse(stDate);
             ObjCont.EndDate = DateTime.Parse(eDate);
