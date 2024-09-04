@@ -14,10 +14,9 @@ namespace WebApplication4.Models
         [Column(TypeName = "nvarchar(MAX)")]
         public string? ContractType { get; set; }
 
-        [Display(Name = "Position")]
-        [Column(TypeName = "nvarchar(MAX)")]
-        public string? Position { get; set; }
-
+        [Display(Name = "salary")]
+        [Column(TypeName = "decimal (18, 0)")]
+        public decimal? salary { get; set; }
 
         [Display(Name = "StartDate")]
         [Column(TypeName = "date")]
@@ -31,5 +30,9 @@ namespace WebApplication4.Models
         [ForeignKey("EmpRef")]
         public int EmpRef { get; set; }
         public Employee? emps { get; set; }
+
+        [ForeignKey("PosRef")]
+        public int PosRef { get; set; }
+        public Position? pos { get; set; }
     }
 }
