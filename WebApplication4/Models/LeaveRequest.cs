@@ -22,13 +22,13 @@ namespace WebApplication4.Models
 
 
         [Display(Name = "StartDate")]
-        [Column(TypeName = "date")]
-        public DateOnly StartDate { get; set; }
+        [Column(TypeName = "datetime")]
+        public DateTime? StartDate { get; set; }
 
 
         [Display(Name = "ExpiryDate")]
-        [Column(TypeName = "date")]
-        public DateOnly ExpiryDate { get; set; }
+        [Column(TypeName = "datetime")]
+        public DateTime? ExpiryDate { get; set; }
 
 
         [Display(Name = "Message Request")]
