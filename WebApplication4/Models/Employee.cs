@@ -1,8 +1,10 @@
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using WebApplication2.Models;
 
-namespace WebApplication4.Models {
+namespace WebApplication4.Models
+{
     public class Employee
     {
         [Key]
@@ -14,11 +16,9 @@ namespace WebApplication4.Models {
         [Column(TypeName = "nvarchar(MAX)")]
         public string? Name { get; set; }
 
-
         [Display(Name = "Image")]
         [Column(TypeName = "nvarchar(MAX)")]
         public string? Image { get; set; }
-
 
         [Display(Name = "Specialty")]
         [Column(TypeName = "nvarchar(MAX)")]
@@ -40,11 +40,9 @@ namespace WebApplication4.Models {
         [Column(TypeName = "datetime")]
         public DateTime? HireDate { get; set; }
 
-
         [ForeignKey("DepRef")]
         public int DepRef { get; set; }
         public Department? Deps { get; set; }
-
 
         [ForeignKey("PosRef")]
         public int PosRef { get; set; }
@@ -53,7 +51,5 @@ namespace WebApplication4.Models {
         [ForeignKey("ProRef")]
         public int ProRef { get; set; }
         public Project? projs { get; set; }
-
-
     }
 }
