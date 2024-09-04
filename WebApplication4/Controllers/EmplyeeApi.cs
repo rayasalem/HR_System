@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Nancy.Json;
 using WebApplication4.DSConn;
 using WebApplication4.Models;
@@ -6,80 +6,89 @@ using Microsoft.EntityFrameworkCore;
 
 namespace WebApplication4.Controllers
 {
-	[Route("api/[controller]")]
-	[ApiController]
-	public class EmployeeApi : ControllerBase
-	{
-		public readonly DBContext _Con;
+    [Route("api/[controller]")]
+    [ApiController]
+    public class EmployeeApi : ControllerBase
+    {
+        public readonly DBContext _Con;
 
-		public EmployeeApi(DBContext con)
-		{
-			_Con = con;
-		}
+        public EmployeeApi(DBContext con)
+        {
+            _Con = con;
+        }
 
-		[HttpPost]
-		[Route("AddEmployee")]
-		public string AddEmployee([FromBody] Employee employee)
-		{
-			_Con.Employees.Add(employee);
-			_Con.SaveChanges();
-			return "Employee Added";
-		}
+        [HttpGet]
+        [Route("AddEmp/{Name}/{Img}/{spec}/{email}/{phone}/{address}/{HDate}/{DepRef}/{PosRef}/{ProRef}")]
+        public string AddEmployee(string Name, string Img, string spec, string email, string phone,
+            string address, string HDate, string DepRef, string PosRef, string ProRef)
+        {
+            Employee ObjEmp = new Employee();
+            ObjEmp.Name = Name;
+            ObjEmp.Image = Img;
+            ObjEmp.Specialty = spec;
+            ObjEmp.Email = email;
+            ObjEmp.Phone = phone;
+            ObjEmp.Address = address;
+            ObjEmp.HireDate = DateTime.Parse(HDate);
+            ObjEmp.DepRef = int.Parse(DepRef);
+            ObjEmp.PosRef = int.Parse(PosRef);
+            ObjEmp.ProRef = int.Parse(ProRef);
+            _Con.Employees.Add(ObjEmp);
+            _Con.SaveChanges();
+            return "Employee Added";
+        }
 
-		[HttpGet]
-		[Route("GetEmployees")]
-		public string GetEmployees()
-		{
-			var employeeList = _Con.Employees.Include(e => e.Deps).Include(e => e.pos).Include(e => e.projs).ToList();
-			JavaScriptSerializer jsData = new JavaScriptSerializer();
-			jsData.MaxJsonLength = int.MaxValue;
-			return jsData.Serialize(employeeList);
-		}
+        [HttpGet]
+        [Route("GetEmployees")]
+        public string GetEmployees()
+        {
+            var getData = from em in _Con.Employees
+                          join dep in _Con.Departments on em.DepRef equals dep.ID
+                          join proj in _Con.Projects on em.ProRef equals proj.ID
+                          join pos in _Con.Positions on em.PosRef equals pos.ID
+                          select new {em.Name, pos.PositionTitle, dep.DepartmentName, proj.ProjectTitle,
+                              em.Image, em.Specialty, em.Address, em.Email, em.Phone, em.HireDate};
 
-		[HttpGet]
-		[Route("GetEmployee/{id}")]
-		public string GetEmployee(int id)
-		{
-			var employee = _Con.Employees.Include(e => e.Deps).Include(e => e.pos).Include(e => e.projs).SingleOrDefault(e => e.Id == id);
-			if (employee == null) return "Employee not found";
+            JavaScriptSerializer jsData = new JavaScriptSerializer();
+            jsData.MaxJsonLength = int.MaxValue;
+            string Val = jsData.Serialize(getData);
+            return Val;
+        }
 
-			JavaScriptSerializer jsData = new JavaScriptSerializer();
-			return jsData.Serialize(employee);
-		}
+        [HttpGet]
+        [Route("EditEmp/{EmpNo}/{Name}/{Img}/{spec}/{email}/{phone}/{address}/{HDate}/{DepRef}/{PosRef}/{ProRef}")]
+        public string EditEmployee(string EmpNo, string Name, string Img, string spec, string email, string phone,
+            string address, string HDate, string DepRef, string PosRef, string ProRef)
+        {
+            int Num = int.Parse(EmpNo);
+            Employee ObjEmp = new Employee();
+            ObjEmp = _Con.Employees.Single(e => e.Id == Num);
+            ObjEmp.Name = Name;
+            ObjEmp.Image = Img;
+            ObjEmp.Specialty = spec;
+            ObjEmp.Email = email;
+            ObjEmp.Phone = phone;
+            ObjEmp.Address = address;
+            ObjEmp.HireDate = DateTime.Parse(HDate);
+            ObjEmp.DepRef = int.Parse(DepRef);
+            ObjEmp.PosRef = int.Parse(PosRef);
+            ObjEmp.ProRef = int.Parse(ProRef);
 
-		[HttpPut]
-		[Route("EditEmployee/{id}")]
-		public string EditEmployee(int id, [FromBody] Employee employeeUpdate)
-		{
-			var employee = _Con.Employees.Include(e => e.Deps).Include(e => e.pos).Include(e => e.projs).SingleOrDefault(e => e.Id == id);
-			if (employee == null) return "Employee not found";
+            _Con.Employees.Update(ObjEmp);
+            _Con.SaveChanges();
+            return "Employee updated";
+        }
 
-			employee.Name = employeeUpdate.Name;
-			employee.Image = employeeUpdate.Image;
-			employee.Specialty = employeeUpdate.Specialty;
-			employee.Email = employeeUpdate.Email;
-			employee.Phone = employeeUpdate.Phone;
-			employee.Address = employeeUpdate.Address;
-			employee.HireDate = employeeUpdate.HireDate;
-			employee.DepRef = employeeUpdate.DepRef;
-			employee.PosRef = employeeUpdate.PosRef;
-			employee.ProRef = employeeUpdate.ProRef;
+        [HttpDelete]
+        [Route("DeleteEmployee/{id}")]
+        public string DeleteEmployee(int id)
+        {
+            var employee = _Con.Employees.Include(e => e.Deps).Include(e => e.pos).Include(e => e.projs).SingleOrDefault(e => e.Id == id);
+            if (employee == null) return "Employee not found";
 
-			_Con.Employees.Update(employee);
-			_Con.SaveChanges();
-			return "Employee updated";
-		}
-
-		[HttpDelete]
-		[Route("DeleteEmployee/{id}")]
-		public string DeleteEmployee(int id)
-		{
-			var employee = _Con.Employees.Include(e => e.Deps).Include(e => e.pos).Include(e => e.projs).SingleOrDefault(e => e.Id == id);
-			if (employee == null) return "Employee not found";
-
-			_Con.Employees.Remove(employee);
-			_Con.SaveChanges();
-			return "Employee deleted";
-		}
-	}
+            _Con.Employees.Remove(employee);
+            _Con.SaveChanges();
+            return "Employee deleted";
+        }
+    }
 }
