@@ -20,7 +20,7 @@ namespace WebApplication4.Controllers
         [HttpGet]
         [Route("AddEmp/{Name}/{Img}/{spec}/{email}/{phone}/{address}/{HDate}/{DepRef}/{ProRef}")]
         public string AddEmployee(string Name, string Img, string spec, string email, string phone,
-            string address, string HDate, string DepRef, string pos, string ProRef)
+            string address, string HDate, string DepRef, string ProRef)
         {
             Employee ObjEmp = new Employee();
             ObjEmp.Name = Name;
@@ -56,7 +56,7 @@ namespace WebApplication4.Controllers
         [HttpGet]
         [Route("EditEmp/{EmpNo}/{Name}/{Img}/{spec}/{email}/{phone}/{address}/{HDate}/{DepRef}/{ProRef}")]
         public string EditEmployee(string EmpNo, string Name, string Img, string spec, string email, string phone,
-            string address, string HDate, string DepRef, string PosRef, string ProRef)
+            string address, string HDate, string DepRef, string ProRef)
         {
             int Num = int.Parse(EmpNo);
             Employee ObjEmp = new Employee();
@@ -78,12 +78,12 @@ namespace WebApplication4.Controllers
 
         [HttpDelete]
         [Route("DeleteEmployee/{id}")]
-        public string DeleteEmployee(int id)
+        public string DeleteEmployee(string id)
         {
-            var employee = _Con.Employees.Include(e => e.Deps).Include(e => e.projs).SingleOrDefault(e => e.Id == id);
-            if (employee == null) return "Employee not found";
-
-            _Con.Employees.Remove(employee);
+            int Num = int.Parse(id);
+            Employee ObjEmp = new Employee();
+            ObjEmp = _Con.Employees.Single(e => e.Id == Num);
+            _Con.Employees.Remove(ObjEmp);
             _Con.SaveChanges();
             return "Employee deleted";
         }
