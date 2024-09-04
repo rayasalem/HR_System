@@ -6,30 +6,39 @@ namespace WebApplication4.Models {
     public class Employee
     {
         [Key]
+        [Display(Name = "Code")]
+        [Column(TypeName = "int")]
         public int Id { get; set; }
 
-        [Required]
-        [MaxLength(100)]
+        [Display(Name = "Name")]
+        [Column(TypeName = "nvarchar(MAX)")]
         public string? Name { get; set; }
 
-        [Required]
-        [Url]
+
+        [Display(Name = "Image")]
+        [Column(TypeName = "nvarchar(MAX)")]
         public string? Image { get; set; }
 
-        [Required]
-        [MaxLength(100)]
+
+        [Display(Name = "Specialty")]
+        [Column(TypeName = "nvarchar(MAX)")]
         public string? Specialty { get; set; }
 
-        [EmailAddress]
+        [Display(Name = "Email")]
+        [Column(TypeName = "nvarchar(MAX)")]
         public string? Email { get; set; }
 
-        [Phone]
+        [Display(Name = "Phone")]
+        [Column(TypeName = "nvarchar(MAX)")]
         public string? Phone { get; set; }
 
-        [MaxLength(200)]
+        [Display(Name = "Address")]
+        [Column(TypeName = "nvarchar(MAX)")]
         public string? Address { get; set; }
 
-        public DateTime? HireDate { get; set; }
+        [Display(Name = "HireDate")]
+        [Column(TypeName = "date")]
+        public DateOnly? HireDate { get; set; }
 
 
         [ForeignKey("DepRef")]
@@ -40,6 +49,7 @@ namespace WebApplication4.Models {
         [ForeignKey("PosRef")]
         public int PosRef { get; set; }
         public Position? pos { get; set; }
+
         [ForeignKey("ProRef")]
         public int ProRef { get; set; }
         public Project? projs { get; set; }
