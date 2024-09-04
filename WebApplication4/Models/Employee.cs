@@ -37,8 +37,8 @@ namespace WebApplication4.Models {
         public string? Address { get; set; }
 
         [Display(Name = "HireDate")]
-        [Column(TypeName = "date")]
-        public DateOnly? HireDate { get; set; }
+        [Column(TypeName = "datetime")]
+        public DateTime? HireDate { get; set; }
 
 
         [ForeignKey("DepRef")]
