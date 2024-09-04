@@ -19,12 +19,12 @@ namespace WebApplication4.Models
         public decimal? salary { get; set; }
 
         [Display(Name = "StartDate")]
-        [Column(TypeName = "date")]
+        [Column(TypeName = "datetime")]
         public DateTime? StartDate { get; set; }
 
 
         [Display(Name = "End Date")]
-        [Column(TypeName = "date")]
+        [Column(TypeName = "datetime")]
         public DateTime? EndDate { get; set; }
 
         [ForeignKey("EmpRef")]
