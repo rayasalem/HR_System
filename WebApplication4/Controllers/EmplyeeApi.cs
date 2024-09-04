@@ -18,9 +18,9 @@ namespace WebApplication4.Controllers
         }
 
         [HttpGet]
-        [Route("AddEmp/{Name}/{Img}/{spec}/{email}/{phone}/{address}/{HDate}/{DepRef}/{PosRef}/{ProRef}")]
+        [Route("AddEmp/{Name}/{Img}/{spec}/{email}/{phone}/{address}/{HDate}/{DepRef}/{ProRef}")]
         public string AddEmployee(string Name, string Img, string spec, string email, string phone,
-            string address, string HDate, string DepRef, string PosRef, string ProRef)
+            string address, string HDate, string DepRef, string pos, string ProRef)
         {
             Employee ObjEmp = new Employee();
             ObjEmp.Name = Name;
@@ -31,7 +31,6 @@ namespace WebApplication4.Controllers
             ObjEmp.Address = address;
             ObjEmp.HireDate = DateTime.Parse(HDate);
             ObjEmp.DepRef = int.Parse(DepRef);
-            ObjEmp.PosRef = int.Parse(PosRef);
             ObjEmp.ProRef = int.Parse(ProRef);
             _Con.Employees.Add(ObjEmp);
             _Con.SaveChanges();
@@ -45,8 +44,7 @@ namespace WebApplication4.Controllers
             var getData = from em in _Con.Employees
                           join dep in _Con.Departments on em.DepRef equals dep.ID
                           join proj in _Con.Projects on em.ProRef equals proj.ID
-                          join pos in _Con.Positions on em.PosRef equals pos.ID
-                          select new {em.Name, pos.PositionTitle, dep.DepartmentName, proj.ProjectTitle,
+                          select new {em.Name, dep.DepartmentName, proj.ProjectTitle,
                               em.Image, em.Specialty, em.Address, em.Email, em.Phone, em.HireDate};
 
             JavaScriptSerializer jsData = new JavaScriptSerializer();
@@ -56,7 +54,7 @@ namespace WebApplication4.Controllers
         }
 
         [HttpGet]
-        [Route("EditEmp/{EmpNo}/{Name}/{Img}/{spec}/{email}/{phone}/{address}/{HDate}/{DepRef}/{PosRef}/{ProRef}")]
+        [Route("EditEmp/{EmpNo}/{Name}/{Img}/{spec}/{email}/{phone}/{address}/{HDate}/{DepRef}/{ProRef}")]
         public string EditEmployee(string EmpNo, string Name, string Img, string spec, string email, string phone,
             string address, string HDate, string DepRef, string PosRef, string ProRef)
         {
@@ -71,7 +69,6 @@ namespace WebApplication4.Controllers
             ObjEmp.Address = address;
             ObjEmp.HireDate = DateTime.Parse(HDate);
             ObjEmp.DepRef = int.Parse(DepRef);
-            ObjEmp.PosRef = int.Parse(PosRef);
             ObjEmp.ProRef = int.Parse(ProRef);
 
             _Con.Employees.Update(ObjEmp);
@@ -83,7 +80,7 @@ namespace WebApplication4.Controllers
         [Route("DeleteEmployee/{id}")]
         public string DeleteEmployee(int id)
         {
-            var employee = _Con.Employees.Include(e => e.Deps).Include(e => e.pos).Include(e => e.projs).SingleOrDefault(e => e.Id == id);
+            var employee = _Con.Employees.Include(e => e.Deps).Include(e => e.projs).SingleOrDefault(e => e.Id == id);
             if (employee == null) return "Employee not found";
 
             _Con.Employees.Remove(employee);
