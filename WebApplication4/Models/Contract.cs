@@ -20,12 +20,12 @@ namespace WebApplication4.Models
 
         [Display(Name = "StartDate")]
         [Column(TypeName = "date")]
-        public DateOnly? StartDate { get; set; }
+        public DateTime? StartDate { get; set; }
 
 
         [Display(Name = "End Date")]
         [Column(TypeName = "date")]
-        public DateOnly? EndDate { get; set; }
+        public DateTime? EndDate { get; set; }
 
         [ForeignKey("EmpRef")]
         public int EmpRef { get; set; }
