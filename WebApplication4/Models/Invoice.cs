@@ -21,13 +21,13 @@ namespace WebApplication4.Models
         public decimal? Amount { get; set; }
 
         [Display(Name = "Invoice Date")]
-        [Column(TypeName = "date")]
-        public DateOnly? InvoiceDate { get; set; }
+        [Column(TypeName = "datetime")]
+        public DateTime? InvoiceDate { get; set; }
 
 
         [Display(Name = "Invoice Due")]
-        [Column(TypeName = "date")]
-        public DateOnly? InvoiceDue { get; set; }
+        [Column(TypeName = "datetime")]
+        public DateTime? InvoiceDue { get; set; }
 
         [Display(Name = "Invoice Description")]
         [Column(TypeName = "nvarchar(MAX)")]
