@@ -10,30 +10,27 @@ namespace WebApplication4.Controllers
     [ApiController]
     public class LeaveRequestApi : ControllerBase
     {
-        private readonly DBContext _Con;
+        public readonly DBContext _Con;
 
         public LeaveRequestApi(DBContext con)
         {
             _Con = con;
         }
 
-        [HttpPost]
-        [Route("AddLeaveRequest")]
-        public string AddLeaveRequest(string NoRequest, string Type, string StartDate, string ExpiryDate,
-                                      string Message, int EmpRef)
+        [HttpGet]
+        [Route("AddLeaveRequest/{NoRequest}/{Type}/{StartDate}/{ExpiryDate}/{Message}/{EmpRef}")]
+        public string AddLeaveRequest(string NoRequest, string Type, string StartDate, string ExpiryDate, string Message, string EmpRef)
         {
-            var newLeaveRequest = new LeaveRequest
-            {
-                NoRequest = NoRequest,
-                Type = Type,
-                StartDate = DateTime.Parse(StartDate),
-                ExpiryDate = DateTime.Parse(ExpiryDate),
-                Message = Message,
-                State = "Pending",
-                EmpRef = EmpRef
-            };
+            LeaveRequest ObjLeaveRequest = new LeaveRequest();
+            ObjLeaveRequest.NoRequest = NoRequest;
+            ObjLeaveRequest.Type = Type;
+            ObjLeaveRequest.StartDate = DateTime.Parse(StartDate);
+            ObjLeaveRequest.ExpiryDate = DateTime.Parse(ExpiryDate);
+            ObjLeaveRequest.Message = Message;
+            ObjLeaveRequest.State = "Pending";
+            ObjLeaveRequest.EmpRef = int.Parse(EmpRef);
 
-            _Con.LeaveRequests.Add(newLeaveRequest);
+            _Con.LeaveRequests.Add(ObjLeaveRequest);
             _Con.SaveChanges();
             return "Leave Request Added";
         }
@@ -42,61 +39,50 @@ namespace WebApplication4.Controllers
         [Route("GetLeaveRequests")]
         public string GetLeaveRequests()
         {
-            var leaveRequests = from lr in _Con.LeaveRequests
-                                join emp in _Con.Employees on lr.EmpRef equals emp.Id
-                                select new
-                                {
-                                    lr.NoRequest,
-                                    lr.Type,
-                                    lr.StartDate,
-                                    lr.ExpiryDate,
-                                    lr.Message,
-                                    lr.State,
-                                    EmployeeName = emp.Name
-                                };
+            var getData = from lr in _Con.LeaveRequests
+                          join emp in _Con.Employees on lr.EmpRef equals emp.Id
+                          select new
+                          {
+                              lr.NoRequest,
+                              lr.Type,
+                              lr.StartDate,
+                              lr.ExpiryDate,
+                              lr.Message,
+                              lr.State,
+                              EmployeeName = emp.Name
+                          };
 
-            var jsSerializer = new JavaScriptSerializer
-            {
-                MaxJsonLength = int.MaxValue
-            };
-
-            return jsSerializer.Serialize(leaveRequests);
+            JavaScriptSerializer jsData = new JavaScriptSerializer();
+            jsData.MaxJsonLength = int.MaxValue;
+            string Val = jsData.Serialize(getData);
+            return Val;
         }
 
-        [HttpPost]
-        [Route("UpdateLeaveRequestState")]
-        public string UpdateLeaveRequestState(int id, string State)
+        [HttpGet]
+        [Route("EditLeaveRequest/{RequestId}/{NoRequest}/{Type}/{StartDate}/{ExpiryDate}/{Message}/{EmpRef}")]
+        public string EditLeaveRequest(string RequestId, string NoRequest, string Type, string StartDate, string ExpiryDate, string Message, string EmpRef)
         {
-            var leaveRequest = _Con.LeaveRequests.SingleOrDefault(lr => lr.RequestId == id);
-            if (leaveRequest == null)
-            {
-                return "Leave Request not found";
-            }
+            int ReqId = int.Parse(RequestId);
+            LeaveRequest ObjLeaveRequest = _Con.LeaveRequests.Single(e => e.RequestId == ReqId);
+            ObjLeaveRequest.NoRequest = NoRequest;
+            ObjLeaveRequest.Type = Type;
+            ObjLeaveRequest.StartDate = DateTime.Parse(StartDate);
+            ObjLeaveRequest.ExpiryDate = DateTime.Parse(ExpiryDate);
+            ObjLeaveRequest.Message = Message;
+            ObjLeaveRequest.EmpRef = int.Parse(EmpRef);
 
-            if (State == "Approved" || State == "Rejected")
-            {
-                leaveRequest.State = State;
-                _Con.LeaveRequests.Update(leaveRequest);
-                _Con.SaveChanges();
-                return $"Leave Request {State}";
-            }
-            else
-            {
-                return "Invalid state. State must be 'Approved' or 'Rejected'.";
-            }
+            _Con.LeaveRequests.Update(ObjLeaveRequest);
+            _Con.SaveChanges();
+            return "Leave Request Updated";
         }
 
         [HttpDelete]
         [Route("DeleteLeaveRequest/{id}")]
-        public string DeleteLeaveRequest(int id)
+        public string DeleteLeaveRequest(string id)
         {
-            var leaveRequest = _Con.LeaveRequests.SingleOrDefault(lr => lr.RequestId == id);
-            if (leaveRequest == null)
-            {
-                return "Leave Request not found";
-            }
-
-            _Con.LeaveRequests.Remove(leaveRequest);
+            int ReqId = int.Parse(id);
+            LeaveRequest ObjLeaveRequest = _Con.LeaveRequests.Single(e => e.RequestId == ReqId);
+            _Con.LeaveRequests.Remove(ObjLeaveRequest);
             _Con.SaveChanges();
             return "Leave Request Deleted";
         }
