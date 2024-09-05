@@ -18,7 +18,7 @@ namespace WebApplication4.Controllers
         }
 
         [HttpGet]
-        [Route("AddEmp/{Name}/{Img}/{spec}/{email}/{phone}/{address}/{HDate}/{DepRef}/{ProRef}")]
+        [Route("AddEmp/{Name}/{Img}/{spec}/{email}/{phone}/{address}/{HDate}/{DepRef}")]
         public string AddEmployee(string Name, string Img, string spec, string email, string phone,
             string address, string HDate, string DepRef, string ProRef)
         {
@@ -31,7 +31,6 @@ namespace WebApplication4.Controllers
             ObjEmp.Address = address;
             ObjEmp.HireDate = DateTime.Parse(HDate);
             ObjEmp.DepRef = int.Parse(DepRef);
-            ObjEmp.ProRef = int.Parse(ProRef);
             _Con.Employees.Add(ObjEmp);
             _Con.SaveChanges();
             return "Employee Added";
@@ -43,9 +42,8 @@ namespace WebApplication4.Controllers
         {
             var getData = from em in _Con.Employees
                           join dep in _Con.Departments on em.DepRef equals dep.ID
-                          join proj in _Con.Projects on em.ProRef equals proj.ID
-                          select new {em.Name, dep.DepartmentName, proj.ProjectTitle,
-                              em.Image, em.Specialty, em.Address, em.Email, em.Phone, em.HireDate};
+                          select new {em.Name, dep.DepartmentName, em.Image,
+                              em.Specialty, em.Address, em.Email, em.Phone, em.HireDate};
 
             JavaScriptSerializer jsData = new JavaScriptSerializer();
             jsData.MaxJsonLength = int.MaxValue;
@@ -54,7 +52,7 @@ namespace WebApplication4.Controllers
         }
 
         [HttpGet]
-        [Route("EditEmp/{EmpNo}/{Name}/{Img}/{spec}/{email}/{phone}/{address}/{HDate}/{DepRef}/{ProRef}")]
+        [Route("EditEmp/{EmpNo}/{Name}/{Img}/{spec}/{email}/{phone}/{address}/{HDate}/{DepRef}")]
         public string EditEmployee(string EmpNo, string Name, string Img, string spec, string email, string phone,
             string address, string HDate, string DepRef, string ProRef)
         {
@@ -69,7 +67,6 @@ namespace WebApplication4.Controllers
             ObjEmp.Address = address;
             ObjEmp.HireDate = DateTime.Parse(HDate);
             ObjEmp.DepRef = int.Parse(DepRef);
-            ObjEmp.ProRef = int.Parse(ProRef);
 
             _Con.Employees.Update(ObjEmp);
             _Con.SaveChanges();
