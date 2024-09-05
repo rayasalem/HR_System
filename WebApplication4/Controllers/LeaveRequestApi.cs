@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Nancy.Json;
 using WebApplication4.DSConn;
 using WebApplication4.Models;
@@ -8,83 +8,90 @@ namespace WebApplication4.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class LeaveRequestApi : ControllerBase
+    public class InvoiceApi : ControllerBase
     {
         public readonly DBContext _Con;
 
-        public LeaveRequestApi(DBContext con)
+        public InvoiceApi(DBContext con)
         {
             _Con = con;
         }
 
         [HttpGet]
-        [Route("AddLeaveRequest/{NoRequest}/{Type}/{StartDate}/{ExpiryDate}/{Message}/{EmpRef}")]
-        public string AddLeaveRequest(string NoRequest, string Type, string StartDate, string ExpiryDate, string Message, string EmpRef)
+        [Route("AddInvoice/{Name}/{Amount}/{InvoiceDate}/{InvoiceDue}/{Description}/{Status}/{EmpRef}")]
+        public string AddInvoice(string Name, string Amount, string InvoiceDate, string InvoiceDue,
+                                 string Description, string Status, string EmpRef)
         {
-            LeaveRequest ObjLeaveRequest = new LeaveRequest();
-            ObjLeaveRequest.NoRequest = NoRequest;
-            ObjLeaveRequest.Type = Type;
-            ObjLeaveRequest.StartDate = DateTime.Parse(StartDate);
-            ObjLeaveRequest.ExpiryDate = DateTime.Parse(ExpiryDate);
-            ObjLeaveRequest.Message = Message;
-            ObjLeaveRequest.State = "Pending";
-            ObjLeaveRequest.EmpRef = int.Parse(EmpRef);
+            Invoice ObjInv = new Invoice
+            {
+                InvoiceName = Name,
+                Amount = decimal.Parse(Amount),
+                InvoiceDate = DateTime.Parse(InvoiceDate),
+                InvoiceDue = DateTime.Parse(InvoiceDue),
+                InvoiceDescription = Description,
+                Status = Status,
+                EmpRef = int.Parse(EmpRef)
+            };
 
-            _Con.LeaveRequests.Add(ObjLeaveRequest);
+            _Con.Invoices.Add(ObjInv);
             _Con.SaveChanges();
-            return "Leave Request Added";
+            return "Invoice Added";
         }
 
         [HttpGet]
-        [Route("GetLeaveRequests")]
-        public string GetLeaveRequests()
+        [Route("GetInvoices")]
+        public string GetInvoices()
         {
-            var getData = from lr in _Con.LeaveRequests
-                          join emp in _Con.Employees on lr.EmpRef equals emp.Id
+            var getData = from inv in _Con.Invoices
+                          join emp in _Con.Employees on inv.EmpRef equals emp.Id
                           select new
                           {
-                              lr.NoRequest,
-                              lr.Type,
-                              lr.StartDate,
-                              lr.ExpiryDate,
-                              lr.Message,
-                              lr.State,
+                              inv.InvoiceName,
+                              inv.Amount,
+                              inv.InvoiceDate,
+                              inv.InvoiceDue,
+                              inv.InvoiceDescription,
+                              inv.Status,
                               EmployeeName = emp.Name
                           };
 
-            JavaScriptSerializer jsData = new JavaScriptSerializer();
-            jsData.MaxJsonLength = int.MaxValue;
-            string Val = jsData.Serialize(getData);
-            return Val;
+            JavaScriptSerializer jsData = new JavaScriptSerializer
+            {
+                MaxJsonLength = int.MaxValue
+            };
+            return jsData.Serialize(getData);
         }
 
         [HttpGet]
-        [Route("EditLeaveRequest/{RequestId}/{NoRequest}/{Type}/{StartDate}/{ExpiryDate}/{Message}/{EmpRef}")]
-        public string EditLeaveRequest(string RequestId, string NoRequest, string Type, string StartDate, string ExpiryDate, string Message, string EmpRef)
+        [Route("EditInvoice/{InvoiceNo}/{Name}/{Amount}/{InvoiceDate}/{InvoiceDue}/{Description}/{Status}/{EmpRef}")]
+        public string EditInvoice(string InvoiceNo, string Name, string Amount, string InvoiceDate,
+                                  string InvoiceDue, string Description, string Status, string EmpRef)
         {
-            int ReqId = int.Parse(RequestId);
-            LeaveRequest ObjLeaveRequest = _Con.LeaveRequests.Single(e => e.RequestId == ReqId);
-            ObjLeaveRequest.NoRequest = NoRequest;
-            ObjLeaveRequest.Type = Type;
-            ObjLeaveRequest.StartDate = DateTime.Parse(StartDate);
-            ObjLeaveRequest.ExpiryDate = DateTime.Parse(ExpiryDate);
-            ObjLeaveRequest.Message = Message;
-            ObjLeaveRequest.EmpRef = int.Parse(EmpRef);
+            int Num = int.Parse(InvoiceNo);
+            Invoice ObjInv = _Con.Invoices.Single(i => i.ID == Num);
+            ObjInv.InvoiceName = Name;
+            ObjInv.Amount = decimal.Parse(Amount);
+            ObjInv.InvoiceDate = DateTime.Parse(InvoiceDate);
+            ObjInv.InvoiceDue = DateTime.Parse(InvoiceDue);
+            ObjInv.InvoiceDescription = Description;
+            ObjInv.Status = Status;
+            ObjInv.EmpRef = int.Parse(EmpRef);
 
-            _Con.LeaveRequests.Update(ObjLeaveRequest);
+            _Con.Invoices.Update(ObjInv);
             _Con.SaveChanges();
-            return "Leave Request Updated";
+            return "Invoice updated";
         }
 
         [HttpDelete]
-        [Route("DeleteLeaveRequest/{id}")]
-        public string DeleteLeaveRequest(string id)
+        [Route("DeleteInvoice/{id}")]
+        public string DeleteInvoice(int id)
         {
-            int ReqId = int.Parse(id);
-            LeaveRequest ObjLeaveRequest = _Con.LeaveRequests.Single(e => e.RequestId == ReqId);
-            _Con.LeaveRequests.Remove(ObjLeaveRequest);
+            var invoice = _Con.Invoices.Include(i => i.emps).SingleOrDefault(i => i.ID == id);
+            if (invoice == null) return "Invoice not found";
+
+            _Con.Invoices.Remove(invoice);
             _Con.SaveChanges();
-            return "Leave Request Deleted";
+            return "Invoice deleted";
         }
     }
 }
