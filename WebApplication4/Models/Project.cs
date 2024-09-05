@@ -38,7 +38,7 @@ namespace WebApplication4.Models
 
         [ForeignKey("EmpRef")]
         public int EmpRef { get; set; }
-        public Employee? EmpRefs { get; set; }
+        public Employee? EmpRef { get; set; }
 
     }
 }
