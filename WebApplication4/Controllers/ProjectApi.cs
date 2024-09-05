@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Nancy.Json;
 using WebApplication4.DSConn;
 using WebApplication4.Models;
 
@@ -17,127 +17,70 @@ namespace WebApplication4.Controllers
             _Con = con;
         }
 
-        [HttpPost]
-        [Route("AddProject")]
-        public IActionResult AddProject([FromBody] Project project)
+        [HttpGet]
+        [Route("AddProj/{title}/{desc}/{status}/{stDate}/{eDate}/{empRe}/{url}")]
+        public string AddProject(string title, string desc, string status, string stDate,
+            string eDate, string empRe, string url)
         {
-            if (project == null)
-                return BadRequest("Project data is null");
-
+            Project project = new Project();
+            project.ProjectTitle = title;
+            project.ProjectDescription = desc;
+            project.ProjectStatus = status; 
+            project.startDate= DateTime.Parse(stDate);
+            project.EndDate = DateTime.Parse(eDate);
+            project.empFK = int.Parse(empRe);
+            project.ProjectUrl = url;
             _Con.Projects.Add(project);
             _Con.SaveChanges();
-            return Ok("Project Added");
+            return "project Added";
         }
 
         [HttpGet]
-        [Route("GetProjects")]
-        public IActionResult GetProjects()
+        [Route("GetProject")]
+        public string GetProject()
         {
-            var projectList = from p in _Con.Projects
-                              join e in _Con.Employees on p.ID equals e.ProRef into employees
-                              select new
-                              {
-                                  p.ID,
-                                  p.Title,
-                                  p.Description,
-                                  p.StartDate,
-                                  p.TimeRequired,
-                                  p.Status,
-                                  p.Attachment,
-                                  Employees = employees.Select(emp => new
-                                  {
-                                      emp.Id,
-                                      emp.Name,
-                                      emp.Email,
-                                      emp.Phone,
-                                      emp.Specialty
-                                  }).ToList()
-                              };
+            var getData = from em in _Con.Employees 
+                          join proj in _Con.Projects on em.Id equals proj.empFK
+                          select new {proj.ProjectTitle, em.Name, proj.ProjectDescription,
+                          proj.ProjectStatus, proj.startDate, proj.EndDate, proj.ProjectUrl};
 
-            var jsonResult = JsonConvert.SerializeObject(projectList.ToList(), new JsonSerializerSettings { MaxDepth = 10 });
-            return Ok(jsonResult);
+            JavaScriptSerializer jsData = new JavaScriptSerializer();
+            jsData.MaxJsonLength = int.MaxValue;
+            string Val = jsData.Serialize(getData);
+            return Val;
+        }
+
+
+        [HttpGet]
+        [Route("Delproj/{projNo}")]
+        public string Deleteproject(string projNo)
+        {
+            int Num = int.Parse(projNo);
+            Project proj = new Project();
+            proj = _Con.Projects.Single(p => p.ID == Num);
+            _Con.Projects.Remove(proj);
+            _Con.SaveChanges();
+            return "deleted project";
         }
 
         [HttpGet]
-        [Route("GetProject/{id}")]
-        public IActionResult GetProject(int id)
+        [Route("Editproj/{projNo}/{title}/{desc}/{status}/{stDate}/{eDate}/{empRe}/{url}")]
+        public string Editproj(string projNo, string title, string desc, string status, string stDate,
+             string eDate, string empRe, string url)
         {
-            var project = (from p in _Con.Projects
-                           join e in _Con.Employees on p.ID equals e.ProRef into employees
-                           where p.ID == id
-                           select new
-                           {
-                               p.ID,
-                               p.Title,
-                               p.Description,
-                               p.StartDate,
-                               p.TimeRequired,
-                               p.Status,
-                               p.Attachment,
-                               Employees = employees.Select(emp => new
-                               {
-                                   emp.Id,
-                                   emp.Name,
-                                   emp.Email,
-                                   emp.Phone,
-                                   emp.Specialty
-                               }).ToList()
-                           }).SingleOrDefault();
-
-            if (project == null)
-                return NotFound("Project not found");
-
-            var jsonResult = JsonConvert.SerializeObject(project, new JsonSerializerSettings { MaxDepth = 10 });
-            return Ok(jsonResult);
-        }
-
-        [HttpPut]
-        [Route("EditProject/{id}")]
-        public IActionResult EditProject(int id, [FromBody] Project projectUpdate)
-        {
-            if (projectUpdate == null)
-                return BadRequest("Project data is null");
-
-            var project = _Con.Projects
-                .Include(p => p.Employees)
-                .SingleOrDefault(p => p.ID == id);
-
-            if (project == null)
-                return NotFound("Project not found");
-
-            project.Title = projectUpdate.Title;
-            project.Description = projectUpdate.Description;
-            project.StartDate = projectUpdate.StartDate;
-            project.TimeRequired = projectUpdate.TimeRequired;
-            project.Status = projectUpdate.Status;
-            project.Attachment = projectUpdate.Attachment;
-
-            
-            if (projectUpdate.Employees != null)
-            {
-                
-                project.Employees = projectUpdate.Employees;
-            }
-
-            _Con.Projects.Update(project);
+            int Num = int.Parse(projNo); 
+            Project proj = new Project();
+            proj = _Con.Projects.Single(p => p.ID == Num);
+            proj.ProjectTitle = title;
+            proj.ProjectDescription = desc;
+            proj.ProjectStatus = status;
+            proj.startDate = DateTime.Parse(stDate);
+            proj.EndDate = DateTime.Parse(eDate); 
+            proj.empFK = int.Parse(empRe);
+            proj.ProjectUrl = url;
+            _Con.Projects.Update(proj);
             _Con.SaveChanges();
-            return Ok("Project updated");
-        }
-
-        [HttpDelete]
-        [Route("DeleteProject/{id}")]
-        public IActionResult DeleteProject(int id)
-        {
-            var project = _Con.Projects
-                .Include(p => p.Employees)
-                .SingleOrDefault(p => p.ID == id);
-
-            if (project == null)
-                return NotFound("Project not found");
-
-            _Con.Projects.Remove(project);
-            _Con.SaveChanges();
-            return Ok("Project deleted");
+            return "updated Project";
         }
     }
 }
