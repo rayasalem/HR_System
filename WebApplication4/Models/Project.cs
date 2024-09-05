@@ -18,5 +18,27 @@ namespace WebApplication4.Models
         [Display(Name = "Project Description")]
         [Column(TypeName = "nvarchar(MAX)")]
         public string? ProjectDescription { get; set; }
+
+        [Display(Name = "Project Status")]
+        [Column(TypeName = "nvarchar(MAX)")]
+        public string? ProjectStatus { get; set; }
+
+        [Display(Name = "ProjectUrl")]
+        [Column(TypeName = "nvarchar(MAX)")]
+        public string? ProjectUrl { get; set; }
+
+        [Display(Name = "Date")]
+        [Column(TypeName = "datetime")]
+        public DateTime? startDate { get; set; }
+
+        [Display(Name = "EndDate")]
+        [Column(TypeName = "datetime")]
+        public DateTime? EndDate { get; set; }
+
+
+        [ForeignKey("EmpRef")]
+        public int EmpRef { get; set; }
+        public Employee? EmpRefs { get; set; }
+
     }
 }
