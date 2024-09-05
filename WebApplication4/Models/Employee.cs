@@ -46,10 +46,5 @@ namespace WebApplication4.Models {
         public Department? Deps { get; set; }
 
 
-        [ForeignKey("ProRef")]
-        public int ProRef { get; set; }
-        public Project? projs { get; set; }
-
-
     }
 }
