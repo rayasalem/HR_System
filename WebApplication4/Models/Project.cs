@@ -36,9 +36,9 @@ namespace WebApplication4.Models
         public DateTime? EndDate { get; set; }
 
 
-        [ForeignKey("EmpRef")]
-        public int? empRef { get; set; }
-        public Employee? Emps { get; set; }
+        [ForeignKey("empFK")]
+        public int? empFK { get; set; }
+        public Employee? Emplos { get; set; }
 
     }
 }
