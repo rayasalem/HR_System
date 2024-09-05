@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Nancy.Json;
 using WebApplication4.DSConn;
 using WebApplication4.Models;
@@ -24,11 +24,11 @@ namespace WebApplication4.Controllers
         {
             Invoice ObjInv = new Invoice
             {
-                Name = Name,
+                InvoiceName = Name,
                 Amount = decimal.Parse(Amount),
                 InvoiceDate = DateTime.Parse(InvoiceDate),
                 InvoiceDue = DateTime.Parse(InvoiceDue),
-                Description = Description,
+                InvoiceDescription = Description,
                 Status = Status,
                 EmpRef = int.Parse(EmpRef)
             };
@@ -46,11 +46,11 @@ namespace WebApplication4.Controllers
                           join emp in _Con.Employees on inv.EmpRef equals emp.Id
                           select new
                           {
-                              inv.Name,
+                              inv.InvoiceName,
                               inv.Amount,
                               inv.InvoiceDate,
                               inv.InvoiceDue,
-                              inv.Description,
+                              inv.InvoiceDescription,
                               inv.Status,
                               EmployeeName = emp.Name
                           };
@@ -68,12 +68,12 @@ namespace WebApplication4.Controllers
                                   string InvoiceDue, string Description, string Status, string EmpRef)
         {
             int Num = int.Parse(InvoiceNo);
-            Invoice ObjInv = _Con.Invoices.Single(i => i.InvoiceId == Num);
-            ObjInv.Name = Name;
+            Invoice ObjInv = _Con.Invoices.Single(i => i.ID == Num);
+            ObjInv.InvoiceName = Name;
             ObjInv.Amount = decimal.Parse(Amount);
             ObjInv.InvoiceDate = DateTime.Parse(InvoiceDate);
             ObjInv.InvoiceDue = DateTime.Parse(InvoiceDue);
-            ObjInv.Description = Description;
+            ObjInv.InvoiceDescription = Description;
             ObjInv.Status = Status;
             ObjInv.EmpRef = int.Parse(EmpRef);
 
@@ -86,7 +86,7 @@ namespace WebApplication4.Controllers
         [Route("DeleteInvoice/{id}")]
         public string DeleteInvoice(int id)
         {
-            var invoice = _Con.Invoices.Include(i => i.emps).SingleOrDefault(i => i.InvoiceId == id);
+            var invoice = _Con.Invoices.Include(i => i.emps).SingleOrDefault(i => i.ID == id);
             if (invoice == null) return "Invoice not found";
 
             _Con.Invoices.Remove(invoice);
