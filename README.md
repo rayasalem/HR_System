@@ -4,5 +4,6 @@
 this is hoisting link:
 http://hrsystem.somee.com/
 
-example: get Department=> http://hrsystem.somee.com/api/ContractApi/GetCont
+example: get Contract=> http://hrsystem.somee.com/api/ContractApi/GetCont
+         get Department => http://hrsystem.somee.com/api/DepartmentApi/GetDep
 
